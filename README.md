@@ -25,7 +25,7 @@ deps:
     target=/rackspace/php-opencloud
 
 [RackspaceCloudFilesBundle]
-    git=https://github.com/liuggio/RackspaceCloudFilesBundle.git
+    git=https://github.com/tvision/RackspaceCloudFilesBundle.git
     target=/bundles/Liuggio/RackspaceCloudFilesBundle
 
 [RackspaceCloudFilesStreamWrapper]
@@ -39,7 +39,7 @@ app/autoload.php
 ```
 $loader->registerNamespaces(array(
     //other namespaces
-    'Tvision\\RackspaceCloudFilesStreamWrapper' =>  __DIR__.'/../vendor/liuggio-rscf-streamwrapper/src',
+    'Tvision\\RackspaceCloudFilesStreamWrapper' =>  __DIR__.'/../vendor/tvision-rackspace-cloud-files-streamwrapper/src',
     'Tvision\\RackspaceCloudFilesBundle'        =>  __DIR__.'/../vendor/bundles',
   ));
 
@@ -65,7 +65,7 @@ Installation Composer
 ```
     "require": {
     # ..
-    "liuggio/rackspace-cloud-files-bundle": ">=2.2",
+    "tvision/rackspace-cloud-files-bundle": ">=2.2",
     # ..
     }
 ```
@@ -83,7 +83,7 @@ Installation Composer
      {
          $bundles = array(
          // ...
-            new Tvision\RackspaceCloudFilesBundle\LiuggioRackspaceCloudFilesBundle(),
+            new Tvision\RackspaceCloudFilesBundle\TvisionRackspaceCloudFilesBundle(),
          // ...
 
 ```
@@ -96,18 +96,19 @@ app/config/config.yml
 ```
 #  Rackspace Cloud Files configuration
 
-liuggio_rackspace_cloud_files:
-    service_class: Liuggio\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper
+tvision_rackspace_cloud_files:
+    service_class: Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper
     stream_wrapper:
         register: true  # do you want to register stream wrapper?
 #        protocol_name: rscf
-#        class: Liuggio\StreamWrapper\RackspaceCloudFilesStreamWrapper
+#        class: Tvision\StreamWrapper\RackspaceCloudFilesStreamWrapper
     auth:
         username: YOUR-USERNAME
         api_key: YOUR-API-KEY
-        host: https://lon.identity.api.rackspacecloud.com/v2.0 # or usa
+        host: https://lon.identity.api.rackspacecloud.com/v2.0 # for london
+#       host: https://identity.api.rackspacecloud.com/v2.0 # for usa
         container_name: YOUR-CONTAINER-NAME
-        region: LON
+        region: LON # default is london, but DFW and ORD are also valid.
 ```
 
 ## Service(s)
@@ -115,7 +116,7 @@ liuggio_rackspace_cloud_files:
 Get the Rackspace service to work with:
 
 ```
-$auth = $this->get('liuggio_rackspace_cloud_files.service');
+$auth = $this->get('tvision_rackspace_cloud_files.service');
 
 ```
 
@@ -165,7 +166,7 @@ Requirements
 
 - rackspace/php-cloudfiles.git
 
-- liuggio/RackspaceCloudFilesStreamWrapper
+- tvision/RackspaceCloudFilesStreamWrapper
 
 - Symfony2
 
