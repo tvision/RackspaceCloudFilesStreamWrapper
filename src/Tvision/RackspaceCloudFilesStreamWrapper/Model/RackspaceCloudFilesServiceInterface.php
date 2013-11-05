@@ -3,6 +3,7 @@
 namespace  Tvision\RackspaceCloudFilesStreamWrapper\Model;
 
 use \OpenCloud\ObjectStore\Resource\Container;
+use OpenCloud\ObjectStore\Resource\AbstractResource;
 
 /**
  * Description of RackspaceCloudFilesServiceInterface
@@ -25,23 +26,23 @@ interface RackspaceCloudFilesServiceInterface
      */
     public function apiGetObjectByContainer(Container $container, $objectData);
     /**
-     * 
+     *
      * @param string $path
-     * @return resource|false
+     * @return AbstractResource|false
      */
     public function createResourceFromPath($path);
     /**
      *
-     * @param type $resource
-     * @return false|container
+     * @param AbstractResource $resource
+     * @return false|Container
      */
     public function getContainerByResource($resource);
 
     /**
      *
      *
-     * @param $resource
-     * @return false|object
+     * @param AbstractResource $resource
+     * @return false|AbstractResource
      */
     public function getObjectByResource($resource);
 

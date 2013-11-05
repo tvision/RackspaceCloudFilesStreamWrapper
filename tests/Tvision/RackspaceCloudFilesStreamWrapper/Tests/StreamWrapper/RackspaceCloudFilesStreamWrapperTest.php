@@ -325,7 +325,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
     {
         $object = $this->getMock('\OpenCloud\DataObject', array('Delete'),array(),'', false);
 
-        $objectCollection = $this->getMock('\OpenCloud\Collection', array('Size','First'),array(),'', false); 
+        $objectCollection = $this->getMock('\OpenCloud\Collection', array('Size','First'),array(),'', false);
         $objectCollection->expects($this->once())
             ->method('Size')
             ->will($this->returnValue(1));
@@ -333,8 +333,8 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
             ->method('First')
             ->will($this->returnValue($object));
 
-         
-        
+
+
         $mockedObjectStoreWithOneObject = $this->getMock('\OpenCloud\ObjectStore', array('ObjectList'),array(),'', false);
         $mockedObjectStoreWithOneObject->expects($this->any())
             ->method('ObjectList')
@@ -392,14 +392,14 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
             'mkdir' => array('','',''),
             'rmdir' => array('','','')
             );
-        
+
         $class = $this->getStreamWrapperClass();
         $streamWrapper = new $class();
 
         foreach ($methods as $method => $params) {
-             
-             call_user_func_array($streamWrapper->$method(), $params);    
-                
-        } 
+
+             call_user_func_array($streamWrapper->$method(), $params);
+
+        }
     }
 }

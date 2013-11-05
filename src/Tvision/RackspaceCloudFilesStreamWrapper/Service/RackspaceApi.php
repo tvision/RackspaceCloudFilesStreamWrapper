@@ -38,7 +38,7 @@ class RackspaceApi
         $this->apiKey = $apiKey;
         $this->containerName = $containerName;
         if( $region ){
-            $this->region = $region;    
+            $this->region = $region;
         }
     }
 

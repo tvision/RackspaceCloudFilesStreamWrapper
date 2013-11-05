@@ -35,10 +35,10 @@ $fileTypeGuesser 		= new \Tvision\RackspaceCloudFilesStreamWrapper\Service\FileT
 
 // Crate a new Rackspace Cloud Files Service
 $rsfcService 			= new \Tvision\RackspaceCloudFilesStreamWrapper\Service\RSCFService(
-	$protocol_name, 
-	$api_service, 
-	$stream_wrapper_class, 
-	$resource_entity_class, 
+	$protocol_name,
+	$api_service,
+	$stream_wrapper_class,
+	$resource_entity_class,
 	$fileTypeGuesser
 	);
 
