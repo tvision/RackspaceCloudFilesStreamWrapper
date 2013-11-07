@@ -2,7 +2,7 @@
 
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Exception;
 
-class Exception extends \Exception
+class Exception extends \Exception implements ExceptionInterface
 {
 
 }
