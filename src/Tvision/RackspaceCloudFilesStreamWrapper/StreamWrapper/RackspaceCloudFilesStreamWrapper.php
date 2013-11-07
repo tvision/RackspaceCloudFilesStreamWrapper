@@ -2,9 +2,9 @@
 
 namespace Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper;
 
-use Tvision\RackspaceCloudFilesStreamWrapper\Model\StreamWrapperInterface,
-    Tvision\RackspaceCloudFilesStreamWrapper\Exceptions\NotImplementedException,
-    Tvision\RackspaceCloudFilesStreamWrapper\Exceptions\NotImplementedDirectoryException;
+use Tvision\RackspaceCloudFilesStreamWrapper\Model\StreamWrapperInterface;
+use Tvision\RackspaceCloudFilesStreamWrapper\Exception\NotImplementedException;
+use Tvision\RackspaceCloudFilesStreamWrapper\Exception\NotImplementedDirectoryException;
 
 /**
  * Description of RackspaceStreamWrapper

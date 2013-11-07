@@ -3,6 +3,7 @@
 namespace  Tvision\RackspaceCloudFilesStreamWrapper\Model;
 
 use \OpenCloud\ObjectStore\Resource\Container;
+use OpenCloud\ObjectStore\Resource\DataObject;
 
 /**
  * Description of RackspaceCloudFilesServiceInterface
@@ -12,10 +13,10 @@ use \OpenCloud\ObjectStore\Resource\Container;
 interface RackspaceCloudFilesServiceInterface
 {
     /**
-     * @param string $container_name
+     * @param string $containerName
      * @return \stdClass
      */
-    public function apiGetContainer($container_name);
+    public function apiGetContainer($containerName);
 
     /**
      * @param Container $container

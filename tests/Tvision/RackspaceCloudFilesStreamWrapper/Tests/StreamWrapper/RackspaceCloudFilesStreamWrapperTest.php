@@ -380,7 +380,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @expectedException \Tvision\RackspaceCloudFilesStreamWrapper\Exceptions\NotImplementedDirectoryException
+     * @expectedException \Tvision\RackspaceCloudFilesStreamWrapper\Exception\NotImplementedDirectoryException
      */
     public function testNotImplementedDirectoryMethods()
     {

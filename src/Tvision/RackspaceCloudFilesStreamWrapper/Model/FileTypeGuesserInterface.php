@@ -1,8 +1,7 @@
 <?php
+
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Model;
-/**
- *
- */
+
 interface FileTypeGuesserInterface
 {
     /**

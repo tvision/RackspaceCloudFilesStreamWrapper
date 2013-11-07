@@ -13,8 +13,8 @@ class RackspaceCloudFilesResource
     private $containerName;
     private $currentPath;
     private $resourceName;
-    private $object = null;
-    private $container = null;
+    private $object;
+    private $container;
 
     /**
      *
@@ -25,11 +25,13 @@ class RackspaceCloudFilesResource
         if (!empty($path)) {
             $this->initResourceByPath($path);
         }
+        $this->setObject(null);
+        $this->setContainer(null);
     }
 
     /**
-     * Take the container and the resource name from the 
-     * 
+     * Take the container and the resource name from the
+     *
      * @param string $path
      * @return RSCFResource|false
      */
@@ -50,17 +52,19 @@ class RackspaceCloudFilesResource
         }
         return $this;
     }
+
     /**
      *
-     * @return String 
+     * @return String
      */
     public function getContainerName()
     {
         return $this->containerName;
     }
+
     /**
      *
-     * @return String 
+     * @return String
      */
     public function getResourceName()
     {
@@ -71,6 +75,7 @@ class RackspaceCloudFilesResource
     {
         $this->containerName = $containerName;
     }
+
     /**
      * @param $resourceName
      */
@@ -78,10 +83,11 @@ class RackspaceCloudFilesResource
     {
         $this->resourceName = $resourceName;
     }
+
     /**
      *
      * @param String $pathName
-     * @return String 
+     * @return String
      */
     public function cleanName($pathName)
     {
@@ -91,8 +97,8 @@ class RackspaceCloudFilesResource
 
     /**
      * set the variable given to the $object property
-     * 
-     * @param type $object 
+     *
+     * @param type $object
      */
     public function setObject($object)
     {
@@ -101,8 +107,8 @@ class RackspaceCloudFilesResource
 
     /**
      * get the current $object
-     * 
-     * @return $object 
+     *
+     * @return $object
      */
     public function getObject()
     {
@@ -111,8 +117,8 @@ class RackspaceCloudFilesResource
 
     /**
      * set the variable given to the container property
-     * 
-     * @param type container 
+     *
+     * @param type container
      */
     public function setContainer($container)
     {
@@ -121,13 +127,14 @@ class RackspaceCloudFilesResource
 
     /**
      * get the current container
-     * 
-     * @return $object 
+     *
+     * @return $object
      */
     public function getContainer()
     {
         return $this->container;
     }
+
     /**
      * @return string
      */
@@ -135,6 +142,7 @@ class RackspaceCloudFilesResource
     {
         return $this->currentPath;
     }
+
     /**
      * @param $currentPath
      */

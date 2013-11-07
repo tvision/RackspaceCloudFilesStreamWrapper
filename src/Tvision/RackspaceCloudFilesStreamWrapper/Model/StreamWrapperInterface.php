@@ -1,6 +1,6 @@
 <?php
 
-namespace  Tvision\RackspaceCloudFilesStreamWrapper\Model;
+namespace Tvision\RackspaceCloudFilesStreamWrapper\Model;
 
 /**
  *
@@ -8,7 +8,6 @@ namespace  Tvision\RackspaceCloudFilesStreamWrapper\Model;
  */
 interface StreamWrapperInterface
 {
-
     function dir_closedir();
 
     function dir_opendir($path, $options);
