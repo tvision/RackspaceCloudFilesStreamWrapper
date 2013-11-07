@@ -30,15 +30,15 @@ class RackspaceApi
 
     private $urlType = 'publicURL';
 
-    public function __construct($connectionClass , $endPoint, $username, $apiKey, $containerName, $region = null)
+    public function __construct($connectionClass, $endPoint, $username, $apiKey, $containerName, $region = null)
     {
         $this->connectionClass = $connectionClass;
         $this->endpoint = $endPoint;
         $this->username = $username;
         $this->apiKey = $apiKey;
         $this->containerName = $containerName;
-        if( $region ){
-            $this->region = $region;    
+        if ($region) {
+            $this->region = $region;
         }
     }
 
@@ -49,10 +49,10 @@ class RackspaceApi
      */
     public function connect()
     {
-        if( !self::$connection ) {
+        if (!self::$connection) {
             $credential = array(
-                'username'  => $this->username,
-                'apiKey'    => $this->apiKey
+                'username' => $this->username,
+                'apiKey' => $this->apiKey
             );
             self::$connection = new Rackspace($this->endpoint, $credential);
         }
@@ -75,7 +75,8 @@ class RackspaceApi
      */
     private function setDefaults()
     {
-        $this->getConnection()->setDefaults('ObjectStore', $this->serviceName, $this->region, $this->urlType);
+        $this->getConnection()
+            ->setDefaults('ObjectStore', $this->serviceName, $this->region, $this->urlType);
     }
 
     /**
@@ -92,16 +93,16 @@ class RackspaceApi
     /**
      * Get the container.
      *
-     * @param String|null $container_name
+     * @param String|null $containerName
      *
      * @return \OpenCloud\ObjectStore\Resource\Container
      */
-    public function getContainer($container_name = null)
+    public function getContainer($containerName = null)
     {
-        if( is_null($container_name)) {
-            $container_name = $this->containerName;
+        if (is_null($containerName)) {
+            $containerName = $this->containerName;
         }
-        return $this->getObjectStore()->Container($container_name);
+        return $this->getObjectStore()->Container($containerName);
     }
 }
 

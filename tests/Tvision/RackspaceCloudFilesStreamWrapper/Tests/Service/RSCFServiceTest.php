@@ -20,10 +20,11 @@ class RSCFServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testApiGetContainer() {
+    public function testApiGetContainer()
+    {
         //we want to asser that the get_container api is called
 
-        $container = $this->getMock('\OpenCloud\ObjectStore\Container',array('Name'), array(),'', false);
+        $container = $this->getMock('\OpenCloud\ObjectStore\Container', array('Name'), array(), '', false);
         $container->expects($this->any())
             ->method('Name')
             ->will($this->returnValue('container-name'));
@@ -48,12 +49,13 @@ class RSCFServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testApiGetObjectByContainer() {
+    public function testApiGetObjectByContainer()
+    {
         //we want to assert that the create_object api is called
 
-        $obj = $this->getMock('\OpenCloud\ObjectStore\Resource\DataObject',array(), array(),'', false);
+        $obj = $this->getMock('\OpenCloud\ObjectStore\Resource\DataObject', array(), array(), '', false);
 
-        $container = $this->getMock('\OpenCloud\ObjectStore\Resource\Container',array('Name','DataObject'), array(),'', false);
+        $container = $this->getMock('\OpenCloud\ObjectStore\Resource\Container', array('Name', 'DataObject'), array(), '', false);
         $container->expects($this->any())
             ->method('Name')
             ->will($this->returnValue('container-name'));
@@ -67,16 +69,17 @@ class RSCFServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($ret, $obj);
     }
-    
 
-    public function testCreateResourceFromPath() {
+
+    public function testCreateResourceFromPath()
+    {
         //we want to test that the file is unlinked
         $resourceName = 'js_75a9295_bootstrap-modal_3.js';
         $resourceContainerName = 'liuggio_assetic';
         $path = 'rscf://' . $resourceContainerName . '/' . $resourceName;
 
-        $object = $this->getMock('\OpenCloud\ObjectStore\Resource\DataObject',array(), array(),'', false);
-        $container = $this->getMock('\OpenCloud\ObjectStore\Resource\Container',array(), array(),'', false);
+        $object = $this->getMock('\OpenCloud\ObjectStore\Resource\DataObject', array(), array(), '', false);
+        $container = $this->getMock('\OpenCloud\ObjectStore\Resource\Container', array(), array(), '', false);
 
 
         $resource = new RackspaceCloudFilesResource();
@@ -122,7 +125,7 @@ class RSCFServiceTest extends \PHPUnit_Framework_TestCase
         //asserting
         $this->assertEquals($ret, $resource);
     }
-    
+
 }
 
  

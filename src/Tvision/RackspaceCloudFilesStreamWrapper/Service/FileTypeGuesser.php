@@ -1,7 +1,7 @@
 <?php
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Service;
 
-use Tvision\RackspaceCloudFilesStreamWrapper\Model\FileTypeGuesserInterface;
+use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface;
 
 /**
  *
@@ -81,7 +81,7 @@ class FileTypeGuesser implements FileTypeGuesserInterface
     {
         $ext = substr(strrchr($filename, '.'), 1);
 
-        if(!$ext) {
+        if (!$ext) {
             return self::$association_extension_default;
         }
         return $ext;

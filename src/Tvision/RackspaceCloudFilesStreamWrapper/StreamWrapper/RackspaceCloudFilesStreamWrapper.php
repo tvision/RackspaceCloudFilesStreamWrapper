@@ -2,9 +2,9 @@
 
 namespace Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper;
 
-use Tvision\RackspaceCloudFilesStreamWrapper\Model\StreamWrapperInterface,
-    Tvision\RackspaceCloudFilesStreamWrapper\Exceptions\NotImplementedException,
-    Tvision\RackspaceCloudFilesStreamWrapper\Exceptions\NotImplementedDirectoryException;
+use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\StreamWrapperInterface;
+use Tvision\RackspaceCloudFilesStreamWrapper\Exception\NotImplementedException;
+use Tvision\RackspaceCloudFilesStreamWrapper\Exception\NotImplementedDirectoryException;
 
 /**
  * Description of RackspaceStreamWrapper
@@ -14,9 +14,9 @@ use Tvision\RackspaceCloudFilesStreamWrapper\Model\StreamWrapperInterface,
 class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
 {
 
-    static $service;    
+    static $service;
     static $protocolName;
-    
+
     private $resource = null;
     private $dataBuffer = null;
     private $dataPosition = 0;
@@ -33,20 +33,20 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @param String $protocol_name Default is rscf
      */
     public static function registerStreamWrapperClass($protocol_name = 'rscf')
-    { 
+    {
         self::$protocolName = $protocol_name;
         $registerFunction = self::getStreamWrapperRegisterFunction();
 
         if (!isset(self::$protocolName)) {
             throw new \RuntimeException(
-                    sprintf('Scheme name not found for %s', __CLASS__));
+                sprintf('Scheme name not found for %s', __CLASS__));
         }
 
         self::unregisterStreamWrapperClass();
 
         if (!$registerFunction(self::$protocolName, __CLASS__)) {
             throw new \RuntimeException(sprintf(
-                            'Could not register stream wrapper class %s for protocolName %s.', __CLASS__, self::$protocolName
+                'Could not register stream wrapper class %s for protocolName %s.', __CLASS__, self::$protocolName
             ));
         }
     }
@@ -56,11 +56,11 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      *
      */
     public static function unregisterStreamWrapperClass()
-    { 
+    {
         $unregisterFunction = self::getStreamWrapperUnregisterFunction();
         if (!isset(self::$protocolName)) {
             throw new \RuntimeException(
-                    sprintf('Scheme name not found for %s', __CLASS__));
+                sprintf('Scheme name not found for %s', __CLASS__));
         }
 
         @$unregisterFunction(self::$protocolName);
@@ -69,17 +69,17 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     /**
      * Set the RackspaceApi Service.
      *
-     * @param $service 
+     * @param $service
      */
     public static function setService($service)
-    { 
+    {
         self::$service = $service;
     }
 
     /**
      * Get the RackspaceApi Service.
      *
-     * @return service 
+     * @return service
      */
     public function getService()
     {
@@ -91,7 +91,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @throws NotImplementedDirectoryException
      */
     public function dir_closedir()
-    { 
+    {
         throw new NotImplementedDirectoryException(__FUNCTION__);
     }
 
@@ -129,7 +129,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      *
      * @param type $path
      * @param  $mode
-     * @param  $options 
+     * @param  $options
      * @return bool
      */
     public function mkdir($path, $mode, $options)
@@ -145,10 +145,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @throws NotImplementedException
      */
     public function rename($path_from, $path_to)
-    { 
-        if( $this->unlink($path_from) ) {
+    {
+        if ($this->unlink($path_from)) {
             $new_resource = $this->getService()->createResourceFromPath($path_to);
-        
+
             if (!$new_resource) {
                 return false;
             }
@@ -178,7 +178,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @throws \BadFunctionCallException
      */
     public function stream_cast($cast_as)
-    { 
+    {
         throw new \BadFunctionCallException();
     }
 
@@ -187,7 +187,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      *
      */
     public function stream_close()
-    { 
+    {
         if ($this->getOnWriteDataMode()) {
             $this->stream_flush();
         }
@@ -200,12 +200,12 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @return bool
      */
     public function stream_eof()
-    { 
+    {
         if (!$this->getResource() || !$this->getResource()->getObject()) {
             return true;
         }
 
-        return ((int) $this->getPosition() >= (int) $this->getResource()->getObject()->content_length);
+        return ((int)$this->getPosition() >= (int)$this->getResource()->getObject()->content_length);
     }
 
     /**
@@ -232,7 +232,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
             $object->Create();
         }
 
-       if (strlen($bufferWritten) ==  strlen($buffer)) {
+        if (strlen($bufferWritten) == strlen($buffer)) {
             $this->setDataBuffer(null);
         } else {
             $this->setDataBuffer($buffer);
@@ -249,7 +249,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @throws \BadFunctionCallException
      */
     public function stream_lock($operation)
-    { 
+    {
         throw new \BadFunctionCallException();
     }
 
@@ -261,16 +261,16 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @throws \BadFunctionCallException
      */
     public function stream_metadata($path, $option, $var)
-    { 
+    {
         throw new \BadFunctionCallException();
     }
 
     /**
      *
-     * @param String    $path
-     * @param String    $mode
-     * @param array     $options
-     * @param String    $opened_path
+     * @param String $path
+     * @param String $mode
+     * @param array $options
+     * @param String $opened_path
      *
      * @return bool
      */
@@ -292,7 +292,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     }
 
     /**
-     * @param  $count 
+     * @param  $count
      * @return string
      */
     public function stream_read($count)
@@ -354,16 +354,16 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @throws \BadFunctionCallException
      */
     public function stream_set_option($option, $arg1, $arg2)
-    { 
+    {
         throw new \BadFunctionCallException();
     }
 
     /**
-     * 
+     *
      * @return array
      */
     public function stream_stat()
-    { 
+    {
         return $this->statCurrentResource();
     }
 
@@ -372,7 +372,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @return int
      */
     public function stream_tell()
-    { 
+    {
         return $this->getPosition();
     }
 
@@ -411,11 +411,11 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
         if ($container) {
 
             $object = $container->ObjectList(array(
-                'limit'     => 1,
-                'prefix'    => $this->getResource()->getResourceName(),
+                'limit' => 1,
+                'prefix' => $this->getResource()->getResourceName(),
             ));
 
-            if( $object->Size() == 1) {
+            if ($object->Size() == 1) {
                 $object->First()->Delete();
                 $this->reset();
 
@@ -428,7 +428,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
 
     /**
      * @param type $path
-     * @param type $flags 
+     * @param type $flags
      * @return array
      */
     public function url_stat($path, $flags)
@@ -440,12 +440,11 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     }
 
 
-
     /**
-     * reset the variable 
+     * reset the variable
      */
     public function reset()
-    { 
+    {
         $this->setPosition(0);
         $this->setOnWriteDataMode(false);
         $this->setDataBuffer(null);
@@ -459,7 +458,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * @return bool|RackspaceCloudFilesStreamWrapper
      */
     public function initFromPath($path)
-    { 
+    {
         $this->setPosition(0);
         $this->setDataBuffer(null);
 
@@ -473,7 +472,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     }
 
     /**
-     *  @todo better understanding if is a dir  from the "Content-Type of "application/directory"
+     * @todo better understanding if is a dir  from the "Content-Type of "application/directory"
      */
     private function statCurrentResource()
     {
@@ -487,7 +486,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
         $pathParts = pathinfo($name);
 
         $object = $this->getResource()->getObject();
-        if ( !$object ) {
+        if (!$object) {
             $isADir = true;
         }
         if ($object && $object->content_length == 0) {
@@ -537,6 +536,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     {
         self::$stream_wrapper_register = $stream_wrapper_register;
     }
+
     /**
      *
      * @return string
@@ -545,6 +545,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     {
         return self::$stream_wrapper_register;
     }
+
     /**
      * @param $stream_wrapper_unregister
      */
@@ -552,6 +553,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
     {
         self::$stream_wrapper_unregister = $stream_wrapper_unregister;
     }
+
     /**
      *
      * @return string
@@ -605,8 +607,8 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      */
     public function appendPosition($length)
     {
-        $this->dataPosition = (int) $this->dataPosition;
-        $this->dataPosition += (int) $length;
+        $this->dataPosition = (int)$this->dataPosition;
+        $this->dataPosition += (int)$length;
         return $this;
     }
 
@@ -627,7 +629,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      */
     public function setPosition($position)
     {
-        $position = (int) $position;
+        $position = (int)$position;
         $this->dataPosition = $position;
     }
 

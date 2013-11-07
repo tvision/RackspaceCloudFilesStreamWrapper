@@ -8,7 +8,8 @@ use \Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource;
 
 class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRegisterStreamWrapperClass() {
+    public function testRegisterStreamWrapperClass()
+    {
         //replace built-in function
         $phpunit = $this;
         $protocolName = 'rscf-test';
@@ -27,7 +28,8 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testUnregisterStreamWrapperClass() {
+    public function testUnregisterStreamWrapperClass()
+    {
         //replace built-in function
         $phpunit = $this;
         $protocolName = 'rscf-test';
@@ -64,14 +66,14 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         return '\\Tvision\\RackspaceCloudFilesStreamWrapper\\RSCFService';
     }
 
-     private function generateMockService($functions)
-     {
-         $obj = $this->getMockBuilder($this->getRSCFServiceClass())
-                 ->setConstructorArgs(array())
-                 ->setMethods($functions)
-                 ->getMock();
-         return $obj;
-     }
+    private function generateMockService($functions)
+    {
+        $obj = $this->getMockBuilder($this->getRSCFServiceClass())
+            ->setConstructorArgs(array())
+            ->setMethods($functions)
+            ->getMock();
+        return $obj;
+    }
 
     public function testInitFromPath()
     {
@@ -85,7 +87,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $resource->setContainerName($resourceContainerName);
 
         //mocking service
-        $service =  $this->generateMockService(array('createResourceFromPath'));
+        $service = $this->generateMockService(array('createResourceFromPath'));
         $service->expects($this->any())
             ->method('createResourceFromPath')
             ->will($this->returnValue($resource));
@@ -123,14 +125,14 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $path = 'rscf://' . $resourceContainerName . '/' . $resourceName;
         // assert that delete_object is called with the correct name
 
-        $mockedCollection = $this->getMock('Collection',array('Size','First'));
+        $mockedCollection = $this->getMock('Collection', array('Size', 'First'));
         $phpunit = $this;
         $container = $this->getMock("\StdClass", array('ObjectList'));
         $container->expects($this->once())
             ->method('ObjectList')
             ->will($this->returnCallback(function ($filter) use ($phpunit, $resourceName, $mockedCollection) {
 
-                $phpunit->assertArrayHasKey('limit',$filter);
+                $phpunit->assertArrayHasKey('limit', $filter);
                 $phpunit->assertArrayHasKey('prefix', $filter);
 
                 $phpunit->assertEquals($resourceName, $filter['prefix']);
@@ -139,7 +141,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
                     ->method('Size')
                     ->will($phpunit->returnValue(1));
 
-                $mockedObject = $phpunit->getMock('Object',array('Delete'));
+                $mockedObject = $phpunit->getMock('Object', array('Delete'));
                 $mockedObject->expects($phpunit->once())
                     ->method('Delete');
 
@@ -148,7 +150,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
                     ->will($phpunit->returnValue($mockedObject));
 
                 return $mockedCollection;
-        }));
+            }));
 
 
         $resource = new RackspaceCloudFilesResource();
@@ -157,7 +159,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $resource->setContainer($container);
 
         //mocking sw
-        $streamWrapper = $this->getMock($this->getStreamWrapperClass(), array('getResource','initFromPath'));
+        $streamWrapper = $this->getMock($this->getStreamWrapperClass(), array('getResource', 'initFromPath'));
         $streamWrapper->expects($this->any())
             ->method('getResource')
             ->will($this->returnValue($resource));
@@ -185,7 +187,6 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($data, $streamWrapper->getDataBuffer());
         $this->assertEquals($ret, strlen($data));
     }
-
 
 
     public function testStream_read()
@@ -236,7 +237,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $phpunit = $this;
         $objectDataBuffer = '1234567890';
         // creating the object
-        $object = $this->getMock("\StdClass", array('setData','Create'));
+        $object = $this->getMock("\StdClass", array('setData', 'Create'));
         //asserting that the object -> write is called correctly
         $object->expects($this->any())
             ->method('setData')
@@ -244,7 +245,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
                 $phpunit->assertEquals($buffer, $objectDataBuffer);
                 //$phpunit->assertEquals($len, strlen($objectDataBuffer));
                 return true;
-        }));
+            }));
 
         $object->expects($this->once())
             ->method('Create');
@@ -254,14 +255,14 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $resource->setContainerName($resourceContainerName);
         $resource->setObject($object);
 
-        $service =  $this->generateMockService(array('guessFileType'));
+        $service = $this->generateMockService(array('guessFileType'));
         $service->expects($this->any())
             ->method('guessFileType')
             ->will($this->returnValue('mimetypeTest'));
 
 
         //mocking sw
-        $streamWrapper = $this->getMock($this->getStreamWrapperClass(), array('getDataBuffer', 'getResource','getService'));
+        $streamWrapper = $this->getMock($this->getStreamWrapperClass(), array('getDataBuffer', 'getResource', 'getService'));
         $streamWrapper->expects($this->any())
             ->method('getDataBuffer')
             ->will($this->returnValue($objectDataBuffer));
@@ -282,7 +283,8 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testMkdir() {
+    public function testMkdir()
+    {
 
         //testing that the API create_paths is called
         //we want to test that the file is unlinked
@@ -295,9 +297,9 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->any())
             ->method('create_paths')
             ->will($this->returnCallback(function ($path) use ($phpunit, $resourceName) {
-            $phpunit->assertEquals($resourceName, $path);
-            return true;
-        }));
+                $phpunit->assertEquals($resourceName, $path);
+                return true;
+            }));
 
 
         $resource = new RackspaceCloudFilesResource();
@@ -306,7 +308,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $resource->setContainer($container);
 
         //mocking sw
-        $streamWrapper = $this->getMock($this->getStreamWrapperClass(), array('getResource','initFromPath'));
+        $streamWrapper = $this->getMock($this->getStreamWrapperClass(), array('getResource', 'initFromPath'));
         $streamWrapper->expects($this->any())
             ->method('getResource')
             ->will($this->returnValue($resource));
@@ -323,9 +325,9 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 
     private function getObjectStoreWithOneObject()
     {
-        $object = $this->getMock('\OpenCloud\DataObject', array('Delete'),array(),'', false);
+        $object = $this->getMock('\OpenCloud\DataObject', array('Delete'), array(), '', false);
 
-        $objectCollection = $this->getMock('\OpenCloud\Collection', array('Size','First'),array(),'', false); 
+        $objectCollection = $this->getMock('\OpenCloud\Collection', array('Size', 'First'), array(), '', false);
         $objectCollection->expects($this->once())
             ->method('Size')
             ->will($this->returnValue(1));
@@ -333,9 +335,8 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
             ->method('First')
             ->will($this->returnValue($object));
 
-         
-        
-        $mockedObjectStoreWithOneObject = $this->getMock('\OpenCloud\ObjectStore', array('ObjectList'),array(),'', false);
+
+        $mockedObjectStoreWithOneObject = $this->getMock('\OpenCloud\ObjectStore', array('ObjectList'), array(), '', false);
         $mockedObjectStoreWithOneObject->expects($this->any())
             ->method('ObjectList')
             ->will($this->returnValue($objectCollection));
@@ -351,16 +352,16 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $resourceClass = $this->getResourceClass();
         $resourceContainerName = 'test_container';
 
-        $path_from  = 'rscf://' . $resourceContainerName . '/images/old_image.gif';
-        $path_to    = 'rscf://' . $resourceContainerName . '/images/new_image.gif';
+        $path_from = 'rscf://' . $resourceContainerName . '/images/old_image.gif';
+        $path_to = 'rscf://' . $resourceContainerName . '/images/new_image.gif';
 
         $mockedObjectStoreWithOneObject = $this->getObjectStoreWithOneObject();
 
-        $resourceFrom   = new $resourceClass();
+        $resourceFrom = new $resourceClass();
         $resourceFrom->setContainer($mockedObjectStoreWithOneObject);
         $resourceFrom->setCurrentPath($path_from);
 
-        $resourceTo   = new $resourceClass();
+        $resourceTo = new $resourceClass();
         $resourceTo->setCurrentPath($path_to);
 
         $streamWrapper->setService($service = $this->generateMockService(array('createResourceFromPath')));
@@ -380,7 +381,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @expectedException \Tvision\RackspaceCloudFilesStreamWrapper\Exceptions\NotImplementedDirectoryException
+     * @expectedException \Tvision\RackspaceCloudFilesStreamWrapper\Exception\NotImplementedDirectoryException
      */
     public function testNotImplementedDirectoryMethods()
     {
@@ -389,17 +390,17 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
             'dir_opendir' => array(''),
             'dir_readdir' => array(),
             'dir_rewinddir' => array(),
-            'mkdir' => array('','',''),
-            'rmdir' => array('','','')
-            );
-        
+            'mkdir' => array('', '', ''),
+            'rmdir' => array('', '', '')
+        );
+
         $class = $this->getStreamWrapperClass();
         $streamWrapper = new $class();
 
         foreach ($methods as $method => $params) {
-             
-             call_user_func_array($streamWrapper->$method(), $params);    
-                
-        } 
+
+            call_user_func_array($streamWrapper->$method(), $params);
+
+        }
     }
 }
