@@ -1,14 +1,14 @@
 {
-    "name":        "tvision/rackspace-cloud-files-streamwrapper",
+    "name": "tvision/rackspace-cloud-files-streamwrapper",
     "description": "Rackspace Cloud Files Streamwrapper for PHP",
-    "keywords":    ["rackspace", "streamwrapper", "cloud", "rackspace cloud files"],
-    "homepage":    "https://github.com/tvision/RackspaceCloudFilesStreamWrapper",
-    "type":        "library",
-    "license":     "MIT",
-    "authors":     [
+    "keywords": ["rackspace", "streamwrapper", "cloud", "rackspace cloud files"],
+    "homepage": "https://github.com/tvision/RackspaceCloudFilesStreamWrapper",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
         {
-            "name":     "Liuggio",
-            "email":    "liuggio@gmail.com",
+            "name": "Liuggio",
+            "email": "liuggio@gmail.com",
             "homepage": "https://github.com/liuggio"
         },
         {
@@ -21,11 +21,11 @@
             "homepage": "https://github.com/tvision"
         }
     ],
-    "require":     {
+    "require": {
         "php": ">=5.3.0",
-        "rackspace/php-opencloud": "1.6.*"
+        "rackspace/php-opencloud": "~1.7.1"
     },
-    "autoload":    {
+    "autoload": {
         "psr-0": {
             "Tvision\\RackspaceCloudFilesStreamWrapper": "src/"
         }
