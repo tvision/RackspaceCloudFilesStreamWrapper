@@ -1,6 +1,6 @@
 <?php
 
-namespace  Tvision\RackspaceCloudFilesStreamWrapper\Model;
+namespace Tvision\RackspaceCloudFilesStreamWrapper\Interfaces;
 
 use \OpenCloud\ObjectStore\Resource\Container;
 use OpenCloud\ObjectStore\Resource\DataObject;
@@ -25,12 +25,14 @@ interface RackspaceCloudFilesServiceInterface
      * @return mixed
      */
     public function apiGetObjectByContainer(Container $container, $objectData);
+
     /**
-     * 
+     *
      * @param string $path
      * @return resource|false
      */
     public function createResourceFromPath($path);
+
     /**
      *
      * @param type $resource

@@ -4,8 +4,8 @@ namespace Tvision\RackspaceCloudFilesStreamWrapper\Service;
 
 use OpenCloud\ObjectStore\Resource\Container;
 use OpenCloud\ObjectStore\Resource\DataObject;
-use Tvision\RackspaceCloudFilesStreamWrapper\Model\FileTypeGuesserInterface;
-use Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesServiceInterface;
+use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface;
+use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\RackspaceCloudFilesServiceInterface;
 
 /**
  * Description of RackSpaceObject

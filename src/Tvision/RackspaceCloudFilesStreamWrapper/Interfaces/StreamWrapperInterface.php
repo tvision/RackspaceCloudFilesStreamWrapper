@@ -1,6 +1,6 @@
 <?php
 
-namespace Tvision\RackspaceCloudFilesStreamWrapper\Model;
+namespace Tvision\RackspaceCloudFilesStreamWrapper\Interfaces;
 
 /**
  *
