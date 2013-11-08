@@ -219,7 +219,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
         $retVal = true;
         if (!empty($buffer)) {
 
-            $object = $this->getResource()->getObject();
+            $object   = $this->getResource()->getObject();
             $mimetype = $this->getService()->guessFileType($this->getResource()->getResourceName());
             $object->content_type = $mimetype;
             $object->setData($buffer);
@@ -412,8 +412,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
 
     /**
      * reset the variable
+     *
+     * @api
      */
-    private function reset()
+    public function reset()
     {
         $this->setPosition(0);
         $this->setOnWriteDataMode(false);
@@ -426,8 +428,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      *
      * @param string $path
      * @return bool|RackspaceCloudFilesStreamWrapper
+     *
+     * @api
      */
-    private function initFromPath($path)
+    public function initFromPath($path)
     {
         $this->setPosition(0);
         $this->setDataBuffer(null);
@@ -441,9 +445,6 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
         return $this;
     }
 
-    /**
-     * @todo better understanding if is a dir  from the "Content-Type of "application/directory"
-     */
     private function statCurrentResource()
     {
         $objectAlreadyExists = true;
@@ -537,8 +538,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * get if the data status is in write mode
      *
      * @return boolean
+     *
+     * @api
      */
-    private function getOnWriteDataMode()
+    public function getOnWriteDataMode()
     {
         return $this->onWriteDataMode;
     }
@@ -547,7 +550,7 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * set the data status
      *
      */
-    private function setOnWriteDataMode($mode = true)
+    public function setOnWriteDataMode($mode = true)
     {
         $this->onWriteDataMode = $mode;
         return $this;
@@ -558,8 +561,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      *
      * @param string $data
      * @return RackspaceCloudFilesStreamWrapper
+     *
+     * @api
      */
-    private function appendDataBuffer($data)
+    public function appendDataBuffer($data)
     {
         if (is_null($this->dataBuffer)) {
             $this->dataBuffer = $data;
@@ -617,8 +622,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * get the current resource
      *
      * @return resource
+     *
+     * @api
      */
-    private function getResource()
+    public function getResource()
     {
         return $this->resource;
     }
@@ -627,8 +634,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * set the variable given to the buffer property
      *
      * @param type dataBuffer
+     *
+     * @api
      */
-    private function setDataBuffer($data)
+    public function setDataBuffer($data)
     {
         $this->dataBuffer = $data;
     }
@@ -637,8 +646,10 @@ class RackspaceCloudFilesStreamWrapper implements StreamWrapperInterface
      * get the current buffer
      *
      * @return $dataBuffer
+     *
+     * @api
      */
-    private function getDataBuffer()
+    public function getDataBuffer()
     {
         return $this->dataBuffer;
     }
