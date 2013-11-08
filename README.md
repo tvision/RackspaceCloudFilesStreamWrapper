@@ -15,7 +15,7 @@ Installation Composer
 ```
     "require": {
     # ..
-    "tvision/rackspace-cloud-files-streamwrapper": "v3.0.0-rc1",
+    "tvision/rackspace-cloud-files-streamwrapper": "v2.3",
     # ..
     }
 ```
