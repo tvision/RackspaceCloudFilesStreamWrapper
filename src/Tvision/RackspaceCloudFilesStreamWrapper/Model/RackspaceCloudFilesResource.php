@@ -3,7 +3,8 @@
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Model;
 
 /**
- * Description of RSCFResource
+ * Class RackspaceCloudFilesResource
+ * @package Tvision\RackspaceCloudFilesStreamWrapper\Model
  *
  * @author liuggio
  */
@@ -17,7 +18,6 @@ class RackspaceCloudFilesResource
     private $container;
 
     /**
-     *
      * @param string $path
      */
     public function __construct($path = null)
@@ -34,6 +34,8 @@ class RackspaceCloudFilesResource
      *
      * @param string $path
      * @return RSCFResource|false
+     *
+     * @api
      */
     public function initResourceByPath($path)
     {
@@ -54,8 +56,9 @@ class RackspaceCloudFilesResource
     }
 
     /**
-     *
      * @return String
+     *
+     * @api
      */
     public function getContainerName()
     {
@@ -63,21 +66,29 @@ class RackspaceCloudFilesResource
     }
 
     /**
-     *
      * @return String
+     *
+     * @api
      */
     public function getResourceName()
     {
         return $this->resourceName;
     }
 
+    /**
+     * @param string $containerName
+     *
+     * @api
+     */
     public function setContainerName($containerName)
     {
         $this->containerName = $containerName;
     }
 
     /**
-     * @param $resourceName
+     * @param string $resourceName
+     *
+     * @api
      */
     public function setResourceName($resourceName)
     {
@@ -85,7 +96,6 @@ class RackspaceCloudFilesResource
     }
 
     /**
-     *
      * @param String $pathName
      * @return String
      */

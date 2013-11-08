@@ -1,14 +1,23 @@
 <?php
+
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Service;
 
 use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface;
 
 /**
- *
+ * Class FileTypeGuesser
+ * @package Tvision\RackspaceCloudFilesStreamWrapper\Service
  */
 class FileTypeGuesser implements FileTypeGuesserInterface
 {
+    /**
+     * @var string $association_extension_default
+     */
     private static $association_extension_default = 'txt';
+
+    /**
+     * @var array $association_extension_fileType
+     */
     private static $association_extension_fileType = array(
         'xls'   =>  'application/excel',
         'hqx'   =>  'application/macbinhex40',
@@ -77,7 +86,7 @@ class FileTypeGuesser implements FileTypeGuesserInterface
      * @param string $filename
      * @return string
      */
-    protected static function getExtensionByFilename($filename)
+    private static function getExtensionByFilename($filename)
     {
         $ext = substr(strrchr($filename, '.'), 1);
 
@@ -88,10 +97,7 @@ class FileTypeGuesser implements FileTypeGuesserInterface
     }
 
     /**
-     * Attempt to get the content-type of a file based on the extension
-     * @static
-     * @param $filename
-     * @return string|false
+     * {@inheritdoc}
      */
     public static function guessByFileName($filename)
     {

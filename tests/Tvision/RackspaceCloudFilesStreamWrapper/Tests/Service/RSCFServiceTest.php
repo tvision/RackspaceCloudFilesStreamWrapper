@@ -3,129 +3,112 @@
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Tests\Service;
 
 use Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource;
+use Tvision\RackspaceCloudFilesStreamWrapper\Service\RSCFService;
 
 /**
  * @author liuggio
  */
 class RSCFServiceTest extends \PHPUnit_Framework_TestCase
 {
+    private $client;
+    private $request;
+    private $service;
+    private $container;
+    private $dataObject;
+    private $RSCFService;
+    private $rackspaceAPI;
+    private $fileTypeGuesser;
 
-    public function getMockService($function = null)
+    public function setUp()
     {
-        $service = $this->getMockBuilder('\\Tvision\\RackspaceCloudFilesStreamWrapper\\Service\\RSCFService')
+        $this->fileTypeGuesser = $this->getMock(
+            'Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface'
+        );
+
+        $this->rackspaceAPI    = $this
+            ->getMockBuilder('Tvision\RackspaceCloudFilesStreamWrapper\Service\RackspaceApi')
             ->disableOriginalConstructor()
-            ->setMethods($function)
             ->getMock();
-        return $service;
+
+        $this->dataObject = $this->getMockBuilder('OpenCloud\ObjectStore\Resource\DataObject')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->service = $this->getMockBuilder('OpenCloud\Common\Service\AbstractService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->container = $this->getMockBuilder('OpenCloud\ObjectStore\Resource\Container')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->container->expects($this->any())
+            ->method('Name')
+            ->will($this->returnValue('liuggio_assetic'));
+
+        $this->container->expects($this->any())
+            ->method('DataObject')
+            ->will($this->returnValue($this->dataObject));
+
+        $this->container->expects($this->any())
+            ->method('getService')
+            ->will($this->returnValue($this->service));
+
+        $this->rackspaceAPI->expects($this->any())
+            ->method('getContainer')
+            ->will($this->returnValue($this->container));
+
+        $this->RSCFService = new RSCFService(
+            'rscf',
+            $this->rackspaceAPI,
+            '\Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper',
+            '\Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource',
+            $this->fileTypeGuesser
+        );
     }
 
-
+    /**
+     * We want to assert that the get_container api is called
+     */
     public function testApiGetContainer()
     {
-        //we want to asser that the get_container api is called
+        $ret = $this->RSCFService->apiGetContainer('container-name');
 
-        $container = $this->getMock('\OpenCloud\ObjectStore\Container', array('Name'), array(), '', false);
-        $container->expects($this->any())
-            ->method('Name')
-            ->will($this->returnValue('container-name'));
-
-        $rackspaceService = $this->getMockBuilder("Tvision\RackspaceCloudFilesStreamWrapper\Service\RackspaceApi")
-            ->disableOriginalConstructor()
-            ->getMock();
-        $rackspaceService->expects($this->once())
-            ->method('getContainer')
-            ->will($this->returnValue($container));
-
-        $service = $this->getMockService(array('getRackspaceService'));
-
-        $service->expects($this->any())
-            ->method('getRackspaceService')
-            ->will($this->returnValue($rackspaceService));
-
-        $ret = $service->apiGetContainer('container-name');
-
-        $this->assertEquals($ret, $container);
-        $this->assertEquals($ret->Name(), $container->Name());
+        $this->assertEquals($ret, $this->container);
+        $this->assertEquals($ret->Name(), $this->container->Name());
     }
 
-
+    /**
+     * We want to assert that the create_object api is called
+     */
     public function testApiGetObjectByContainer()
     {
-        //we want to assert that the create_object api is called
+        $ret = $this->RSCFService->apiGetObjectByContainer($this->container, array(
+            'name'         => 'test-object',
+            'content_type' => 'image/gif'
+        ));
 
-        $obj = $this->getMock('\OpenCloud\ObjectStore\Resource\DataObject', array(), array(), '', false);
-
-        $container = $this->getMock('\OpenCloud\ObjectStore\Resource\Container', array('Name', 'DataObject'), array(), '', false);
-        $container->expects($this->any())
-            ->method('Name')
-            ->will($this->returnValue('container-name'));
-        $container->expects($this->any())
-            ->method('DataObject')
-            ->will($this->returnValue($obj));
-
-        $service = $this->getMockService();
-
-        $ret = $service->apiGetObjectByContainer($container, array('name' => 'test-object', 'content_type' => 'image/gif'));
-
-        $this->assertEquals($ret, $obj);
+        $this->assertEquals($ret, $this->dataObject);
     }
 
-
+    /**
+     * We want to test that the file is unlinked
+     */
     public function testCreateResourceFromPath()
     {
-        //we want to test that the file is unlinked
-        $resourceName = 'js_75a9295_bootstrap-modal_3.js';
+        $resourceName          = 'js_75a9295_bootstrap-modal_3.js';
         $resourceContainerName = 'liuggio_assetic';
         $path = 'rscf://' . $resourceContainerName . '/' . $resourceName;
-
-        $object = $this->getMock('\OpenCloud\ObjectStore\Resource\DataObject', array(), array(), '', false);
-        $container = $this->getMock('\OpenCloud\ObjectStore\Resource\Container', array(), array(), '', false);
-
 
         $resource = new RackspaceCloudFilesResource();
         $resource->setResourceName($resourceName);
         $resource->setContainerName($resourceContainerName);
-        $resource->setObject($object);
-        $resource->setContainer($container);
+        $resource->setObject($this->dataObject);
+        $resource->setContainer($this->container);
         $resource->setCurrentPath($path);
 
-        $rackspaceApi = $this->getMockBuilder("Tvision\RackspaceCloudFilesStreamWrapper\Service\RackspaceApi")
-            ->disableOriginalConstructor()
-            ->getMock();
-        $rackspaceApi->expects($this->once())
-            ->method('getContainer')
-            ->will($this->returnValue($container));
+        $ret = $this->RSCFService->createResourceFromPath($path);
 
-        $service = $this->getMockService(
-            array(
-                'getResourceClass',
-                'apiGetContainer',
-                'apiGetObjectByContainer',
-                'getRackspaceService',
-                'getContainerByResource',
-                'getObjectByResource',
-                'guessFileType'));
-
-        $service->expects($this->any())
-            ->method('getResourceClass')
-            ->will($this->returnValue('\\Tvision\\RackspaceCloudFilesStreamWrapper\\Model\\RackspaceCloudFilesResource'));
-        $service->expects($this->any())
-            ->method('apiGetContainer')
-            ->will($this->returnValue($container));
-        $service->expects($this->any())
-            ->method('getRackspaceService')
-            ->will($this->returnValue($rackspaceApi));
-        $service->expects($this->any())
-            ->method('apiGetObjectByContainer')
-            ->will($this->returnValue($object));
-
-
-        $ret = $service->createResourceFromPath($path);
-
-        //asserting
         $this->assertEquals($ret, $resource);
     }
-
 }
-
- 

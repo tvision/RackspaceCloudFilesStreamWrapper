@@ -5,10 +5,13 @@ namespace Tvision\RackspaceCloudFilesStreamWrapper\Interfaces;
 interface FileTypeGuesserInterface
 {
     /**
+     * Attempt to get the content-type of a file based on the extension
+     *
      * @static
-     * @abstract
      * @param $filename
      * @return String
+     *
+     * @api
      */
     public static function guessByFileName($filename);
 
