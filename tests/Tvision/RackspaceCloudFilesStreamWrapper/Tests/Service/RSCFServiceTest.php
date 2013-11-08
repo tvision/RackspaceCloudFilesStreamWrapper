@@ -10,8 +10,6 @@ use Tvision\RackspaceCloudFilesStreamWrapper\Service\RSCFService;
  */
 class RSCFServiceTest extends \PHPUnit_Framework_TestCase
 {
-    private $client;
-    private $request;
     private $service;
     private $container;
     private $dataObject;
