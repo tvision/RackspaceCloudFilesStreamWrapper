@@ -3,7 +3,6 @@
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Service;
 
 use OpenCloud\ObjectStore\Resource\Container;
-use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface;
 use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\RackspaceCloudFilesServiceInterface;
 
 /**
@@ -35,30 +34,30 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     private $streamWrapperClass;
 
     /**
-     * @var FileTypeGuesserInterface $fileTypeGuesser
+     * @var string$fileTypeGuesserClass
      */
-    private $fileTypeGuesser;
+    private $fileTypeGuesserClass;
 
     /**
      * @param string $protocolName
      * @param RackspaceApi $rackspaceApi
      * @param string $streamWrapperClass
      * @param string $resourceEntityClass
-     * @param FileTypeGuesserInterface $fileTypeGuesser
+     * @param string $fileTypeGuesserClass
      */
     public function __construct($protocolName,
                                 RackspaceApi $rackspaceApi,
                                 $streamWrapperClass,
                                 $resourceEntityClass,
-                                FileTypeGuesserInterface $fileTypeGuesser)
+                                $fileTypeGuesserClass)
     {
         $this->setProtocolName($protocolName);
         $this->setRackspaceApi($rackspaceApi);
         $this->setStreamWrapperClass($streamWrapperClass);
         $this->setResourceClass($resourceEntityClass);
 
-        if ($fileTypeGuesser) {
-            $this->setFileTypeGuesser($fileTypeGuesser);
+        if ($fileTypeGuesserClass) {
+            $this->setFileTypeGuesserClass($fileTypeGuesserClass);
         }
     }
 
@@ -189,12 +188,12 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     }
 
     /**
-     * @param FileTypeGuesserInterface $fileTypeGuesser
+     * @param string $fileTypeGuesserClass
      * @return $this
      */
-    private function setFileTypeGuesser(FileTypeGuesserInterface $fileTypeGuesser)
+    private function setFileTypeGuesserClass($fileTypeGuesserClass)
     {
-        $this->fileTypeGuesser = $fileTypeGuesser;
+        $this->fileTypeGuesserClass = $fileTypeGuesserClass;
         return $this;
     }
 
@@ -204,7 +203,7 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     public function guessFileType($filename)
     {
 
-        $class = $this->fileTypeGuesser;
+        $class = $this->fileTypeGuesserClass;
         return $class::guessByFileName($filename);
     }
 
