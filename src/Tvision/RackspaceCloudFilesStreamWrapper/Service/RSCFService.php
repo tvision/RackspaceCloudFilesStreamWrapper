@@ -34,7 +34,7 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     private $streamWrapperClass;
 
     /**
-     * @var string$fileTypeGuesserClass
+     * @var string $fileTypeGuesserClass
      */
     private $fileTypeGuesserClass;
 
