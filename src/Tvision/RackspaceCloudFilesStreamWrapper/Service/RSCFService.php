@@ -153,7 +153,7 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
             return false;
         }
         $object = $container->DataObject();
-        $object->setName($objectData['name']);
+        $object->name = $objectData['name'];
         $object->setContentType($objectData['content_type']);
 
         return $object;
