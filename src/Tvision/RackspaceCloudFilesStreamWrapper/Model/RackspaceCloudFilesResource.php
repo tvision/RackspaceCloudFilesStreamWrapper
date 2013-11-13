@@ -2,6 +2,9 @@
 
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Model;
 
+use OpenCloud\ObjectStore\Resource\DataObject;
+use OpenCloud\ObjectStore\Resource\Container;
+
 /**
  * Class RackspaceCloudFilesResource
  * @package Tvision\RackspaceCloudFilesStreamWrapper\Model
@@ -10,11 +13,29 @@ namespace Tvision\RackspaceCloudFilesStreamWrapper\Model;
  */
 class RackspaceCloudFilesResource
 {
-
+    /**
+     * @var string $containerName
+     */
     private $containerName;
+
+    /**
+     * @var string $currentPath
+     */
     private $currentPath;
+
+    /**
+     * @var string $resourceName
+     */
     private $resourceName;
+
+    /**
+     * @var DataObject $object
+     */
     private $object;
+
+    /**
+     * @var Container $container
+     */
     private $container;
 
     /**
@@ -108,7 +129,7 @@ class RackspaceCloudFilesResource
     /**
      * set the variable given to the $object property
      *
-     * @param type $object
+     * @param DataObject $object
      */
     public function setObject($object)
     {
@@ -118,7 +139,7 @@ class RackspaceCloudFilesResource
     /**
      * get the current $object
      *
-     * @return $object
+     * @return DataObject
      */
     public function getObject()
     {
@@ -128,7 +149,7 @@ class RackspaceCloudFilesResource
     /**
      * set the variable given to the container property
      *
-     * @param type container
+     * @param Container $container
      */
     public function setContainer($container)
     {
@@ -138,7 +159,7 @@ class RackspaceCloudFilesResource
     /**
      * get the current container
      *
-     * @return $object
+     * @return Container
      */
     public function getContainer()
     {

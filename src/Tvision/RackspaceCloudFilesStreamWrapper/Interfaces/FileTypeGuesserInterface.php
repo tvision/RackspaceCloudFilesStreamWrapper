@@ -13,6 +13,6 @@ interface FileTypeGuesserInterface
      *
      * @api
      */
-    public static function guessByFileName($filename);
+    public function guessByFileName($filename);
 
 }

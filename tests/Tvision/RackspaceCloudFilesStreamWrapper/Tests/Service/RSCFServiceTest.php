@@ -10,83 +10,65 @@ use Tvision\RackspaceCloudFilesStreamWrapper\Service\RSCFService;
  */
 class RSCFServiceTest extends \PHPUnit_Framework_TestCase
 {
-    private $service;
-    private $container;
-    private $dataObject;
+    /**
+     * @var \PHPUnit_framework_MockObject_MockObject $objectStore
+     */
+    private $objectStore;
+
+    /**
+     * @var RSCFService $RSCFService
+     */
     private $RSCFService;
-    private $rackspaceAPI;
-    private $fileTypeGuesser;
 
     public function setUp()
     {
-        $this->fileTypeGuesser = $this->getMock(
-            'Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface'
-        );
-
-        $this->rackspaceAPI    = $this
-            ->getMockBuilder('Tvision\RackspaceCloudFilesStreamWrapper\Service\RackspaceApi')
+        $this->objectStore = $this->getMockBuilder('\OpenCloud\ObjectStore\Service')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->dataObject = $this->getMockBuilder('OpenCloud\ObjectStore\Resource\DataObject')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->service = $this->getMockBuilder('OpenCloud\Common\Service\AbstractService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->container = $this->getMockBuilder('OpenCloud\ObjectStore\Resource\Container')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->container->expects($this->any())
-            ->method('Name')
-            ->will($this->returnValue('liuggio_assetic'));
-
-        $this->container->expects($this->any())
-            ->method('DataObject')
-            ->will($this->returnValue($this->dataObject));
-
-        $this->container->expects($this->any())
-            ->method('getService')
-            ->will($this->returnValue($this->service));
-
-        $this->rackspaceAPI->expects($this->any())
-            ->method('getContainer')
-            ->will($this->returnValue($this->container));
-
-        $this->RSCFService = new RSCFService(
-            'rscf',
-            $this->rackspaceAPI,
-            '\Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper',
-            '\Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource',
-            $this->fileTypeGuesser
-        );
+        $this->RSCFService = new RSCFService($this->objectStore, 'liuggio_assetic');
     }
 
     /**
-     * We want to assert that the get_container api is called
+     * We want to assert that the getContainer api is called
      */
-    public function testApiGetContainer()
+    public function testGetContainer()
     {
-        $ret = $this->RSCFService->apiGetContainer('container-name');
+        $this->objectStore
+            ->expects($this->once())
+            ->method('getContainer')
+            ->with($this->equalTo('container-name'));
 
-        $this->assertEquals($ret, $this->container);
-        $this->assertEquals($ret->Name(), $this->container->Name());
+        $this->RSCFService->getContainer('container-name');
     }
 
     /**
      * We want to assert that the create_object api is called
      */
-    public function testApiGetObjectByContainer()
+    public function testGetObjectByContainer()
     {
-        $ret = $this->RSCFService->apiGetObjectByContainer($this->container, array(
-            'name'         => 'test-object',
-            'content_type' => 'image/gif'
-        ));
+        $object = $this->getMockBuilder('\OpenCloud\ObjectStore\Resource\Container')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setName','setContentType'))
+            ->getMock();
+        $object->expects($this->once())
+            ->method('setName')
+            ->with($this->equalTo('testName'));
+        $object->expects($this->once())
+            ->method('setContentType')
+            ->with($this->equalTo('testContentType'));
+        $container = $this->getMockBuilder('\OpenCloud\ObjectStore\Resource\Container')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects($this->once())
+            ->method('dataObject')
+            ->will($this->returnValue($object));
 
-        $this->assertEquals($ret, $this->dataObject);
+        $data = array(
+            'name'         => 'testName',
+            'content_type' => 'testContentType',
+        );
+
+        $this->RSCFService->getObjectByContainer($container, $data);
     }
 
     /**
@@ -94,15 +76,37 @@ class RSCFServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateResourceFromPath()
     {
+
         $resourceName          = 'js_75a9295_bootstrap-modal_3.js';
         $resourceContainerName = 'liuggio_assetic';
         $path = 'rscf://' . $resourceContainerName . '/' . $resourceName;
 
+        $object = $this->getMockBuilder('\OpenCloud\ObjectStore\Resource\Container')
+            ->disableOriginalConstructor()
+            ->setMethods(array('setName'))
+            ->getMock();
+        $object->expects($this->once())
+            ->method('setName')
+            ->with($this->equalTo($resourceName));
+
+        $container = $this->getMockBuilder('\OpenCloud\ObjectStore\Resource\Container')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects($this->once())
+            ->method('dataObject')
+            ->will($this->returnValue($object));
+
+        $this->objectStore
+            ->expects($this->once())
+            ->method('getContainer')
+            ->with($this->equalTo('liuggio_assetic'))
+            ->will($this->returnValue($container));
+
         $resource = new RackspaceCloudFilesResource();
         $resource->setResourceName($resourceName);
         $resource->setContainerName($resourceContainerName);
-        $resource->setObject($this->dataObject);
-        $resource->setContainer($this->container);
+        $resource->setObject($object);
+        $resource->setContainer($container);
         $resource->setCurrentPath($path);
 
         $ret = $this->RSCFService->createResourceFromPath($path);

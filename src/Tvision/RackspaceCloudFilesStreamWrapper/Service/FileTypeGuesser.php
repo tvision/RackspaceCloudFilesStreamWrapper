@@ -11,14 +11,14 @@ use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface
 class FileTypeGuesser implements FileTypeGuesserInterface
 {
     /**
-     * @var string $association_extension_default
+     * @var string $associationExtensionDefault
      */
-    private static $association_extension_default = 'txt';
+    private $associationExtensionDefault = 'txt';
 
     /**
-     * @var array $association_extension_fileType
+     * @var array $associationExtensionFileType
      */
-    private static $association_extension_fileType = array(
+    private $associationExtensionFileType = array(
         'xls'   =>  'application/excel',
         'hqx'   =>  'application/macbinhex40',
         'doc'   =>  'application/msword',
@@ -86,12 +86,12 @@ class FileTypeGuesser implements FileTypeGuesserInterface
      * @param string $filename
      * @return string
      */
-    private static function getExtensionByFilename($filename)
+    private function getExtensionByFilename($filename)
     {
         $ext = substr(strrchr($filename, '.'), 1);
 
         if (!$ext) {
-            return self::$association_extension_default;
+            return $this->associationExtensionDefault;
         }
         return $ext;
     }
@@ -99,12 +99,12 @@ class FileTypeGuesser implements FileTypeGuesserInterface
     /**
      * {@inheritdoc}
      */
-    public static function guessByFileName($filename)
+    public function guessByFileName($filename)
     {
-        $extension = self::getExtensionByFilename($filename);
+        $extension = $this->getExtensionByFilename($filename);
 
-        if (array_key_exists($extension, self::$association_extension_fileType)) {
-            return self::$association_extension_fileType[$extension];
+        if (array_key_exists($extension, $this->associationExtensionFileType)) {
+            return $this->associationExtensionFileType[$extension];
         } else {
             return false;
         }
