@@ -2,7 +2,8 @@
 
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Interfaces;
 
-use \OpenCloud\ObjectStore\Resource\Container;
+use OpenCloud\ObjectStore\Resource\Container;
+use Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource;
 
 /**
  * Description of RackspaceCloudFilesServiceInterface
@@ -13,11 +14,11 @@ interface RackspaceCloudFilesServiceInterface
 {
     /**
      * @param string $containerName
-     * @return \stdClass
+     * @return Container
      *
      * @api
      */
-    public function apiGetContainer($containerName);
+    public function getContainer($containerName);
 
     /**
      * @param Container $container
@@ -26,31 +27,31 @@ interface RackspaceCloudFilesServiceInterface
      *
      * @api
      */
-    public function apiGetObjectByContainer(Container $container, $objectData);
+    public function getObjectByContainer(Container $container, $objectData);
 
     /**
      * @param string $path
-     * @return resource|false
+     * @return RackspaceCloudFilesResource|false
      *
      * @api
      */
     public function createResourceFromPath($path);
 
     /**
-     * @param type $resource
+     * @param RackspaceCloudFilesResource $resource
      * @return false|container
      *
      * @api
      */
-    public function getContainerByResource($resource);
+    public function getContainerByResource(RackspaceCloudFilesResource $resource);
 
     /**
-     * @param $resource
+     * @param RackspaceCloudFilesResource $resource
      * @return false|object
      *
      * @api
      */
-    public function getObjectByResource($resource);
+    public function getObjectByResource(RackspaceCloudFilesResource $resource);
 
     /**
      * try to guess the mimetype from a filename
@@ -61,4 +62,13 @@ interface RackspaceCloudFilesServiceInterface
      * @api
      */
     public function guessFileType($filename);
+
+    /**
+     * set your own file type guesser
+     *
+     * @param FileTypeGuesserInterface $fileTypeGuesser
+     *
+     * @api
+     */
+    public function setFileTypeGuesser(FileTypeGuesserInterface $fileTypeGuesser);
 }

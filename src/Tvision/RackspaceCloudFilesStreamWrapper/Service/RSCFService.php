@@ -2,7 +2,10 @@
 
 namespace Tvision\RackspaceCloudFilesStreamWrapper\Service;
 
-use OpenCloud\ObjectStore\Resource\Container;
+use OpenCloud\ObjectStore\Service as ObjectStore;
+use OpenCloud\ObjectStore\Resource\Container as OpenCloudContainer;
+use Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource;
+use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\FileTypeGuesserInterface;
 use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\RackspaceCloudFilesServiceInterface;
 
 /**
@@ -14,105 +17,34 @@ use Tvision\RackspaceCloudFilesStreamWrapper\Interfaces\RackspaceCloudFilesServi
 class RSCFService implements RackspaceCloudFilesServiceInterface
 {
     /**
-     * @var RackspaceApi $rackspaceService
+     * @var ObjectStore $objectStore
      */
-    private $rackspaceApi;
+    private $objectStore;
 
     /**
-     * @var string $protocolName
+     * @var string $containerName
      */
-    private $protocolName;
+    private $containerName;
 
     /**
-     * @var string $resourceClass
+     * @var FileTypeGuesserInterface $fileTypeGuesser
      */
-    private $resourceClass;
+    private $fileTypeGuesser;
 
     /**
-     * @var string $streamWrapperClass
+     * @param ObjectStore $objectStore
+     * @param string $containerName
      */
-    private $streamWrapperClass;
-
-    /**
-     * @var string $fileTypeGuesserClass
-     */
-    private $fileTypeGuesserClass;
-
-    /**
-     * @param string $protocolName
-     * @param RackspaceApi $rackspaceApi
-     * @param string $streamWrapperClass
-     * @param string $resourceEntityClass
-     * @param string $fileTypeGuesserClass
-     */
-    public function __construct($protocolName,
-                                RackspaceApi $rackspaceApi,
-                                $streamWrapperClass,
-                                $resourceEntityClass,
-                                $fileTypeGuesserClass)
+    public function __construct(ObjectStore $objectStore, $containerName)
     {
-        $this->setProtocolName($protocolName);
-        $this->setRackspaceApi($rackspaceApi);
-        $this->setStreamWrapperClass($streamWrapperClass);
-        $this->setResourceClass($resourceEntityClass);
-
-        if ($fileTypeGuesserClass) {
-            $this->setFileTypeGuesserClass($fileTypeGuesserClass);
-        }
-    }
-
-    /**
-     * @param $streamWrapperClass
-     * @return $this
-     */
-    private function setStreamWrapperClass($streamWrapperClass)
-    {
-        $this->streamWrapperClass = $streamWrapperClass;
-        return $this;
-    }
-
-    /**
-     * @param RackspaceApi $rackspaceApi
-     * @return $this
-     */
-    private function setRackspaceApi(RackspaceApi $rackspaceApi)
-    {
-        $this->rackspaceApi = $rackspaceApi;
-        return $this;
-    }
-
-    /**
-     * @param $resourceClass
-     * @return $this
-     */
-    private function setResourceClass($resourceClass)
-    {
-        $this->resourceClass = $resourceClass;
-        return $this;
-    }
-
-    /**
-     * @param $protocolName
-     * @return $this
-     */
-    private function setProtocolName($protocolName)
-    {
-        $this->protocolName = $protocolName;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    private function getResourceClass()
-    {
-        return $this->resourceClass;
+        $this->objectStore   = $objectStore;
+        $this->containerName = $containerName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getContainerByResource($resource)
+    public function getContainerByResource(RackspaceCloudFilesResource $resource)
     {
         return $resource->getContainer();
     }
@@ -120,12 +52,12 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getObjectByResource($resource)
+    public function getObjectByResource(RackspaceCloudFilesResource $resource)
     {
-        $container = $resource->getContainer();
-        if ($container) {
+        if ($resource->getContainer()) {
             return $resource->getObject();
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -133,11 +65,9 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function apiGetContainer($containerName)
+    public function getContainer($containerName)
     {
-        $container = $this->getRackspaceApi()
-            ->getContainer($containerName);
-        if (!$container) {
+        if (!$container = $this->objectStore->getContainer($containerName)) {
             return false;
         }
         return $container;
@@ -147,15 +77,11 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function apiGetObjectByContainer(Container $container, $objectData)
+    public function getObjectByContainer(OpenCloudContainer $container, $objectData)
     {
-        if (!$container) {
-            return false;
-        }
-        $object = $container->DataObject();
-        $object->name = $objectData['name'];
+        $object = $container->dataObject();
+        $object->setName($objectData['name']);
         $object->setContentType($objectData['content_type']);
-
         return $object;
     }
 
@@ -164,12 +90,11 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
      */
     public function createResourceFromPath($path)
     {
-        $container = $this->getRackspaceApi()->getContainer();
-        $resource  = $this->getResourceClass();
-        $resource  = new $resource($path);
-        if (!$resource) {
-            return false;
-        }
+        $container = $this->objectStore->getContainer(
+            $this->containerName
+        );
+
+        $resource  = new RackspaceCloudFilesResource($path);
 
         //create_object but no problem if already exists
         $objectData = array(
@@ -177,10 +102,10 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
             'content_type' => $this->guessFileType($path),
         );
 
-        $obj = $this->apiGetObjectByContainer($container, $objectData, $path);
-        if (!$obj) {
+        if (!$obj = $this->getObjectByContainer($container, $objectData)) {
             return false;
         }
+
         $resource->setObject($obj);
         $resource->setContainer($container);
 
@@ -188,30 +113,25 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     }
 
     /**
-     * @param string $fileTypeGuesserClass
-     * @return $this
-     */
-    private function setFileTypeGuesserClass($fileTypeGuesserClass)
-    {
-        $this->fileTypeGuesserClass = $fileTypeGuesserClass;
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function guessFileType($filename)
     {
-
-        $class = $this->fileTypeGuesserClass;
-        return $class::guessByFileName($filename);
+        if(!is_null($this->fileTypeGuesser)){
+            return $this->fileTypeGuesser->guessByFileName($filename);
+        }
+        return false;
     }
 
     /**
-     * @return RackspaceApi
+     * set your own file type guesser
+     *
+     * @param FileTypeGuesserInterface $fileTypeGuesser
+     *
+     * @api
      */
-    private function getRackspaceApi()
+    public function setFileTypeGuesser(FileTypeGuesserInterface $fileTypeGuesser)
     {
-        return $this->rackspaceApi;
+        $this->fileTypeGuesser = $fileTypeGuesser;
     }
 }

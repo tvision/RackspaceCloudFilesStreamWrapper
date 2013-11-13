@@ -70,7 +70,7 @@ class RSCFServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testApiGetContainer()
     {
-        $ret = $this->RSCFService->apiGetContainer('container-name');
+        $ret = $this->RSCFService->getContainer('container-name');
 
         $this->assertEquals($ret, $this->container);
         $this->assertEquals($ret->Name(), $this->container->Name());
