@@ -14,7 +14,8 @@ class FileTypeGuesserTest extends \PHPUnit_Framework_TestCase
      */
     public function testGuessByFileName($input, $outputToAssert)
     {
-        $output = FileTypeGuesser::guessByFileName($input);
+        $guesser = new FileTypeGuesser();
+        $output = $guesser->guessByFileName($input);
         $this->assertTrue(false !== $output);
         $this->assertEquals($output, $outputToAssert);
     }

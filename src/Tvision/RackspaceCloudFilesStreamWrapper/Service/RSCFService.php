@@ -77,11 +77,13 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getObjectByContainer(OpenCloudContainer $container, $objectData)
+    public function getObjectByContainer(OpenCloudContainer $container, array $objectData)
     {
         $object = $container->dataObject();
         $object->setName($objectData['name']);
-        $object->setContentType($objectData['content_type']);
+        if(isset($objectData['content_type'])){
+            $object->setContentType($objectData['content_type']);
+        }
         return $object;
     }
 
@@ -98,9 +100,12 @@ class RSCFService implements RackspaceCloudFilesServiceInterface
 
         //create_object but no problem if already exists
         $objectData = array(
-            'name'         => $resource->getResourceName(),
-            'content_type' => $this->guessFileType($path),
+            'name' => $resource->getResourceName(),
         );
+
+        if($mimeType = $this->guessFileType($path)){
+            $objectData['content_type'] = $mimeType;
+        }
 
         if (!$obj = $this->getObjectByContainer($container, $objectData)) {
             return false;

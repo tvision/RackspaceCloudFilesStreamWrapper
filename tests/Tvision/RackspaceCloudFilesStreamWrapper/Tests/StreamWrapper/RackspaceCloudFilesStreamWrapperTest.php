@@ -5,24 +5,14 @@ namespace Tvision\RackspaceCloudFilesStreamWrapper\Tests\StreamWrapper;
 use \Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper;
 use \Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource;
 
-
 class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 {
-    private $resourceClass;
-    private $RSCFServiceClass;
-    private $streamWrapperClass;
-    
-    public function setUp()
-    {
-        $this->resourceClass      = '\Tvision\RackspaceCloudFilesStreamWrapper\Model\RackspaceCloudFilesResource';
-        $this->RSCFServiceClass   = '\Tvision\RackspaceCloudFilesStreamWrapper\RSCFService';
-        $this->streamWrapperClass =
-            '\Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper';
-    }
+    private $streamWrapperClass =
+        '\Tvision\RackspaceCloudFilesStreamWrapper\StreamWrapper\RackspaceCloudFilesStreamWrapper';
 
     private function generateMockService(array $methods)
     {
-        $obj = $this->getMockBuilder($this->RSCFServiceClass)
+        $obj = $this->getMockBuilder('Tvision\RackspaceCloudFilesStreamWrapper\Service\RSCFService')
             ->disableOriginalConstructor()
             ->setMethods($methods)
             ->getMock();
@@ -102,8 +92,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 
     public function testReset()
     {
-        $class = $this->streamWrapperClass;
-        $class = new $class();
+        $class = new RackspaceCloudFilesStreamWrapper();
         $class->setOnWriteDataMode('true');
         $class->appendDataBuffer('dataaaa');
 
@@ -193,12 +182,20 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $objectDataBuffer = '1234567890';
 
         // creating the object
-        $object = $this->getMock('\StdClass', array('read'));
+        $object  = $this->getMock('\StdClass', array('getContentLength', 'getContent'));
+        $content = $this->getMock('\StdClass', array('getStream'));
+
+        $content->expects($this->any())
+            ->method('getStream')
+            ->will($this->returnValue($objectDataBuffer));
 
         $object->expects($this->any())
-            ->method('read')
-            ->will($this->returnValue($objectDataBuffer));
-        $object->content_length = strlen($objectDataBuffer);
+            ->method('getContentLength')
+            ->will($this->returnValue(strlen($objectDataBuffer)));
+
+        $object->expects($this->any())
+            ->method('getContent')
+            ->will($this->returnValue($content));
 
         $resource = new RackspaceCloudFilesResource();
         $resource->setResourceName($resourceName);
@@ -231,7 +228,7 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
         $phpunit = $this;
         $objectDataBuffer = '1234567890';
         // creating the object
-        $object = $this->getMock('\StdClass', array('setData', 'Create'));
+        $object = $this->getMock('\StdClass', array('setData', 'getName'));
         //asserting that the object -> write is called correctly
         $object->expects($this->any())
             ->method('setData')
@@ -241,13 +238,14 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
                 return true;
             }));
 
-        $object->expects($this->once())
-            ->method('Create');
+        $container = $this->getMock('\StdClass', array('uploadObject'));
+        $container->expects($this->once())->method('uploadObject');
 
         $resource = new RackspaceCloudFilesResource();
         $resource->setResourceName($resourceName);
         $resource->setContainerName($resourceContainerName);
         $resource->setObject($object);
+        $resource->setContainer($container);
 
         $service = $this->generateMockService(array('guessFileType'));
         $service->expects($this->any())
@@ -343,7 +341,6 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
     public function testRename()
     {
         $resourceContainerName = 'test_container';
-        $resourceClass         = $this->resourceClass;
         $streamWrapperClass    = $this->streamWrapperClass;
         $streamWrapper         = new $streamWrapperClass();
 
@@ -352,11 +349,11 @@ class RackspaceCloudFilesStreamWrapperTest extends \PHPUnit_Framework_TestCase
 
         $mockedObjectStoreWithOneObject = $this->getObjectStoreWithOneObject();
 
-        $resourceFrom = new $resourceClass();
+        $resourceFrom = new RackspaceCloudFilesResource();
         $resourceFrom->setContainer($mockedObjectStoreWithOneObject);
         $resourceFrom->setCurrentPath($path_from);
 
-        $resourceTo = new $resourceClass();
+        $resourceTo = new RackspaceCloudFilesResource();
         $resourceTo->setCurrentPath($path_to);
 
         $service = $this->generateMockService(array('createResourceFromPath'));

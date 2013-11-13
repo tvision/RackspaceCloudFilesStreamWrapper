@@ -27,7 +27,7 @@ interface RackspaceCloudFilesServiceInterface
      *
      * @api
      */
-    public function getObjectByContainer(Container $container, $objectData);
+    public function getObjectByContainer(Container $container, array $objectData);
 
     /**
      * @param string $path
